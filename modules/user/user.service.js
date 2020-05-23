@@ -1,5 +1,5 @@
 var EventEmitter = require('events');
-var config = require('../../config');
+var config = require('../../config/environment');
 var mailer = require('../../common/mailer');
 var secretKey = "emart_jwt_token";
 var jwt = require('jsonwebtoken');

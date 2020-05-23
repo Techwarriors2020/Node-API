@@ -1,16 +1,20 @@
 var EventEmitter = require('events');
 var nodemailer = require("nodemailer");
-var config = require('../config');
+var config = require('../config/environment');
+const SMTP_CONFIG = require("../config/smtp");
 exports.sendMail = function(email, link){
     var emitter = new EventEmitter()
     let transporter = nodemailer.createTransport({
-       host: "smtp.gmail.com",
-       port: 465,
-       secure: true, // true for 465, false for other ports
-       auth: {
-         user: 'techhwarrior@gmail.com', // generated ethereal user
-         pass: 'Tech@#86' // generated ethereal password
-       }
+      host: SMTP_CONFIG.host,
+      port: SMTP_CONFIG.port,
+      secure: false,
+      auth: {
+        user: SMTP_CONFIG.user,
+        pass: SMTP_CONFIG.pass,
+      },
+      tls: {
+        rejectUnauthorized: false,
+      },
      });
      // setup email data with unicode symbols
      let mailOptions = {
