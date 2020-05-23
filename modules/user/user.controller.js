@@ -1,4 +1,6 @@
 var UserService = require('./user.service');
+var config = require('../../config/environment');
+
 exports.register = function(req, res) {
     var data = req.body;
     UserService.registerUser(data)
@@ -34,7 +36,7 @@ exports.register = function(req, res) {
         });
     })
     .on('PASSWORD_MISMATCH', function(){
-        res.status(401).send({
+        res.status(403).send({
             code: 5005,
             message: 'Password and confirm password are not matching.'
         });
@@ -45,22 +47,25 @@ exports.verifyUser = function(req, res){
     var data = req.query;
     UserService.verifyUser(data)
     .on('SUCCESS', function(){
-        res.status(200).send({
-            code: 5000,
-            message: 'Account verified successfully'
-        });
+        // res.status(200).send({
+        //     code: 5000,
+        //     message: 'Account verified successfully'
+        // });
+        res.redirect(config.websiteUrl + '/login?message=Account verified successfully');
     })
     .on('ERROR', function(error){
-        res.status(401).send({
-            code: 5005,
-            message:'un-authorized link',
-            details:error
-        });
+        // res.status(401).send({
+        //     code: 5005,
+        //     message:'un-authorized link',
+        //     details:error
+        // });
+        res.redirect(config.websiteUrl + '/error?message=Un-authorized link');
     })
     .on('EXPIRED', function(){
-        res.status(410).send({
-            code: 5006,
-            message: 'Account verification link expired.'
-        });
+        // res.status(410).send({
+        //     code: 5006,
+        //     message: 'Account verification link expired.'
+        // });
+        res.redirect(config.websiteUrl + '/error?message=Account verification link expired');
     })
 }

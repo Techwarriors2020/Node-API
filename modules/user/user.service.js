@@ -6,28 +6,35 @@ var jwt = require('jsonwebtoken');
 
 exports.registerUser = function (data) {
     var emitter = new EventEmitter();
-    if (data && data.email && data.password && data.confirmPassword && data.mobileNumber) {
+    console.log(data);
+    if (data && data.email && data.mobileNumber && data.password && data.confirmPassword) {
         if(data.password === data.confirmPassword) {
             if (validateEmail(data.email)) {
                 var token = jwt.sign({ email: data.email }, secretKey, { expiresIn: 60 * 60 });
                 let linkToVerifyUser = `${config.apiUrl}/user/verify-user?token=${token}&email=${data.email}`;
                 mailer.sendMail(data.email, linkToVerifyUser)
                 .on('DONE', function () {
-                    emitter.emit('SUCCESS');
+                    setTimeout(() => {
+                        emitter.emit('SUCCESS');
+                    }, 1);
                 })
                 .on('ERROR', () => {
-                    emitter.emit('ERROR');
+                    setTimeout(() => {
+                        emitter.emit('ERROR');
+                    }, 1);
                 });
             } else {
-                setTimeout(function () {
+                setTimeout(() => {
                     emitter.emit('INVALID_EMAIL');
                 }, 1);
             }
         } else {
-            emitter.emit('PASSWORD_MISMATCH');
+            setTimeout(() => {
+                emitter.emit('PASSWORD_MISMATCH');
+            }, 1);
         }
     } else {
-        setTimeout(function () {
+        setTimeout(() => {
             emitter.emit('INCOMPLETE_DATA');
         }, 1);
     }
@@ -39,11 +46,13 @@ exports.verifyUser = function (data) {
     var emitter = new EventEmitter();
     jwt.verify(data.token, secretKey, function(err, token){
         if(err && err.expiredAt) {
-            setTimeout(function(){
+            setTimeout(() => {
                 emitter.emit('EXPIRED');
-            },0);
+            }, 1);
         } else {
-            emitter.emit('SUCCESS');
+            setTimeout(() => {
+                emitter.emit('SUCCESS');
+            }, 1);
         }
     });
 
