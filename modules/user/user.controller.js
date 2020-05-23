@@ -3,25 +3,41 @@ exports.register = function(req, res) {
     var data = req.body;
     UserService.registerUser(data)
     .on('SUCCESS', function(){
-        res.send({
+        res.status(200).send({
+            code: '5000',
             message: 'Registered successfully.',
             email: data.email
         });
     })
     .on('DUPLICATE', function(){
-        res.send({message: 'User allready exist.'});
+        res.status(409).send({
+            code: 5001,
+            message: 'User allready exist.'
+        });
     })
     .on('INVALID_EMAIL', function(){
-        res.send({message: 'Entered email is invalid.'});
+        res.status(403).send({
+            code: 5002,
+            message: 'Entered email is invalid.'
+        });
     })
     .on('ERROR', function(){
-        res.send({message: 'Error while registering user'});
+        res.status(404).send({
+            code: 5003,
+            message: 'Error while registering user'
+        });
     })
     .on('INCOMPLETE_DATA', function(){
-        res.send({message: 'Please enter complete data of user.'});
+        res.status(422).send({
+            code: 5004,
+            message: 'Please enter complete data of user.'
+        });
     })
     .on('PASSWORD_MISMATCH', function(){
-        res.send({message: 'Password and confirm password are not matching.'});
+        res.status(401).send({
+            code: 5005,
+            message: 'Password and confirm password are not matching.'
+        });
     })
 };
 
@@ -29,12 +45,22 @@ exports.verifyUser = function(req, res){
     var data = req.query;
     UserService.verifyUser(data)
     .on('SUCCESS', function(){
-        res.send('Account verified successfully');
+        res.status(200).send({
+            code: 5000,
+            message: 'Account verified successfully'
+        });
     })
     .on('ERROR', function(error){
-        res.send({message:'Un-authorized', details:error});
+        res.status(401).send({
+            code: 5005,
+            message:'un-authorized link',
+            details:error
+        });
     })
     .on('EXPIRED', function(){
-        res.send('Verification expired.');
+        res.status(410).send({
+            code: 5006,
+            message: 'Account verification link expired.'
+        });
     })
 }

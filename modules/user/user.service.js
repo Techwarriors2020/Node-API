@@ -6,23 +6,26 @@ var jwt = require('jsonwebtoken');
 
 exports.registerUser = function (data) {
     var emitter = new EventEmitter();
-    if (data && data.email && data.password) {
-        if (validateEmail(data.email)) {
-            var token = jwt.sign({ email: data.email }, secretKey, { expiresIn: 60 * 60 });
-            let linkToVerifyUser = `${config.apiUrl}/user/verify-user?token=${token}&email=${data.email}`;
-            mailer.sendMail(data.email, linkToVerifyUser)
-            .on('DONE', function () {
-                emitter.emit('SUCCESS');
-            })
-            .on('ERROR', () => {
-                emitter.emit('ERROR');
-            });
+    if (data && data.email && data.password && data.confirmPassword && data.mobileNumber) {
+        if(data.password === data.confirmPassword) {
+            if (validateEmail(data.email)) {
+                var token = jwt.sign({ email: data.email }, secretKey, { expiresIn: 60 * 60 });
+                let linkToVerifyUser = `${config.apiUrl}/user/verify-user?token=${token}&email=${data.email}`;
+                mailer.sendMail(data.email, linkToVerifyUser)
+                .on('DONE', function () {
+                    emitter.emit('SUCCESS');
+                })
+                .on('ERROR', () => {
+                    emitter.emit('ERROR');
+                });
+            } else {
+                setTimeout(function () {
+                    emitter.emit('INVALID_EMAIL');
+                }, 1);
+            }
         } else {
-            setTimeout(function () {
-                emitter.emit('INVALID_EMAIL');
-            }, 1);
+            emitter.emit('PASSWORD_MISMATCH');
         }
-
     } else {
         setTimeout(function () {
             emitter.emit('INCOMPLETE_DATA');
