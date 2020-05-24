@@ -4,5 +4,6 @@ var userController = require('./user.controller');
 
 router.post('/register', userController.register);
 router.get('/verify-user', userController.verifyUser);
+router.post('/login', userController.login);
 
 module.exports = router;
