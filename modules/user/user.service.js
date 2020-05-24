@@ -9,38 +9,55 @@ var jwt = require('jsonwebtoken');
 
 exports.registerUser = function (data) {
     var emitter = new EventEmitter();
-    console.log(data);
+    console.log("STEP1");
     if (data && data.email && data.mobileNumber && data.password && data.confirmPassword) {
+        console.log("STEP2");
         if(data.password === data.confirmPassword) {
+            console.log("STEP3");
             if (validateEmail(data.email)) {
+                console.log("STEP4");
                 var encrypted = crypto.createCipher(algorithm, data.password);
                 data.password = encrypted.update(secretKey, "utf8", "hex");
                 data.userId = Date.now();
                 var userData = new UserModel(data);
                 userData.save().then(function (user) {
+                    console.log("STEP5");
                     var token = jwt.sign({ email: data.email }, secretKey, { expiresIn: 60 * 60 });
                     let linkToVerifyUser = `${config.apiUrl}/user/verify-user?token=${token}&email=${data.email}`;
                     mailer.sendMail(data.email, linkToVerifyUser).on('DONE', function () {
-                        emitter.emit('SUCCESS');
+                        console.log("STEP6");
+                        setTimeout(() => {
+                            emitter.emit('SUCCESS');
+                        }, 1);
                     });
                 }, function (error) {
+                    console.log("STEP7");
                     if (error.code === 11000) {
+                    console.log("STEP8");
+                    setTimeout(() => {
                         emitter.emit('DUPLICATE');
+                    }, 1);
                     } else {
+                    console.log("STEP9");
+                    setTimeout(() => {
                         emitter.emit('ERROR');
+                    }, 1);
                     }
                 });
             } else {
+                console.log("STEP10");
                 setTimeout(() => {
                     emitter.emit('INVALID_EMAIL');
                 }, 1);
             }
         } else {
+            console.log("STEP11");
             setTimeout(() => {
                 emitter.emit('PASSWORD_MISMATCH');
             }, 1);
         }
     } else {
+        console.log("STEP12");
         setTimeout(() => {
             emitter.emit('INCOMPLETE_DATA');
         }, 1);
@@ -55,12 +72,16 @@ exports.verifyUser = function (data) {
         if(err && err.expiredAt) {
             setTimeout(function(){
                 emitter.emit('EXPIRED');
-            },0);
+            },1);
         } else {
             UserModel.update({email: data.email}, {$set: {isVerified: true}}).then(function(users){
-                emitter.emit('SUCCESS');
+                setTimeout(() => {
+                    emitter.emit('SUCCESS');
+                }, 1);
             }, function(error){
-                emitter.emit('ERROR', error);
+                setTimeout(() => {
+                    emitter.emit('ERROR', error);
+                }, 1);
             });
         }
     });
