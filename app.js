@@ -6,7 +6,7 @@ var app = express();
 
 // Database connection
 var mongoUrl = "mongodb+srv://vipto786:D2CSAHjJe3dnFOmH@cluster0-hsc5k.mongodb.net/emart?retryWrites=true&w=majority";
-mongoose.connect(mongoUrl, { useUnifiedTopology: true }, function (err, connect) {
+mongoose.connect(mongoUrl, { useFindAndModify: false, useUnifiedTopology: true }, function (err, connect) {
     if (err) {
         console.log("Error in connecting to mongodb", err);
     } else {
