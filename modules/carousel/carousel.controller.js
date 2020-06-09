@@ -17,6 +17,24 @@ exports.getCarouselItems = function (req, res) {
     })
 };
 
+exports.getCarouselItemById = (req, res) => {
+  var id = req.params.id;
+  CarouselService
+  .getCarouselItemById(id)
+  .on("SUCCESS", function (response) {
+    res.status(200).send({
+      code: "5000",
+      data: response
+    });
+  })
+  .on("ERROR", function () {
+    res.status(404).send({
+      code: 5003,
+      message: "Error while getting carousel",
+    });
+  })
+};
+
 exports.addCarouselItem = function(req, res) {
   var data = req.body;
   CarouselService.addCarouselItem(data)

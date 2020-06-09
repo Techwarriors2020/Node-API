@@ -12,6 +12,17 @@ exports.getCarouselItems = function () {
     return emitter;
 }
 
+exports.getCarouselItemById = (id) => {
+    var emitter = new EventEmitter();
+    CarouselModel.find({carouselItemId: id}, {__v: 0, _id: 0}).then(function(carouselItem){
+        emitter.emit("SUCCESS",carouselItem);
+    }, function(error){
+        emitter.emit("ERROR", error);
+    });
+
+    return emitter;
+}
+
 exports.addCarouselItem = function (data) {
     var emitter = new EventEmitter();
     data.carouselItemId = Date.now();

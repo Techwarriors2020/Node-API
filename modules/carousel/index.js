@@ -6,4 +6,5 @@ router.get('/get', carouselController.getCarouselItems);
 router.post('/create', carouselController.addCarouselItem);
 router.put('/update/:id', carouselController.updateCarouselItem);
 router.delete('/delete', carouselController.deleteCarouselItem);
+router.get('/get/:id', carouselController.getCarouselItemById);
 module.exports = router;
